@@ -1,80 +1,49 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-#define all(a) (a).begin(), (a).end()
-#define endl "\n"
-#define vec vector
-#define pii pair<int, int>
-#define se second
-#define fi first
-#define pb push_back
-#define maxel(v) *max_element(v.begin(), v.end())
-#define minel(v) *min_element(v.begin(), v.end())
-#define yes cout << "YES\n";
-#define m1 cout << "-1\n";
-#define no cout << "NO\n";
 
-int main()
-{
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM =
+            chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+
+int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+
     int tt;
-    if (!(cin >> tt))
-        return 0;
-    while (tt--)
-    {
-        int n;
-        ll k;
+    cin >> tt;
+    while (tt--) {
+        ll n, k;
         cin >> n >> k;
-        vec<ll> s(n), t(n);
-        for (int i = 0; i < n; i++)
-        {
-            cin >> s[i];
-        }
-        for (int i = 0; i < n; i++)
-        {
-            cin >> t[i];
-        }
-        if (k == 0)
-        {
-            sort(all(s));
-            sort(all(t));
-            if (s == t)
-                yes else no continue;
-        }
-        unordered_map<ll, int> cnt;
-        // cnt.reserve(n * 2);
-        for (auto &x : s)
-        {
+        unordered_map<ll, int, custom_hash> cnt;
+        for (int i = 0; i < n; i++) {
+            ll x; cin >> x;
             ll r = x % k;
-            // if (r < 0)
-            //     r += k;
-            ll nr = min(r, k - r);
-            cnt[nr]++;
+            cnt[min(r, k-r)]++;
         }
-        for(auto& curr: cnt){
-            cout<<curr.first<<" : "<<curr.second<<endl;
-        }
-        for (auto &x : t)
-        {
+        for (int i = 0; i < n; i++) {
+            ll x; cin >> x;
             ll r = x % k;
-            // if (r < 0)
-            //     r += k;
-            ll nr = min(r, k - r);
-            cnt[nr]--;
-        }
-        for(auto& curr: cnt){
-            cout<<curr.first<<" : "<<curr.second<<endl;
+            cnt[min(r, k-r)]--;
         }
         bool ok = true;
-        for (auto &p : cnt)
-            if (p.second != 0)
-            {
+        for (auto &p : cnt) {
+            if (p.second != 0) {
                 ok = false;
                 break;
             }
-        if (ok)
-            yes else no
+        }
+        cout << (ok ? "YES\n" : "NO\n");
     }
     return 0;
 }
