@@ -31,14 +31,21 @@ size_t operator()(uint64_t x) const {
 }
 };
 
-void solve(){
-    int n, k, cnt = 0;
-    string s;
-    cin >> n >> k >> s;
-    for(char c : s)
-        if(c == '1')
-            cnt++;
-    cout << (cnt <= k || n < 2*k ? "Alice" : "Bob") << '\n';
+void solve() {
+    cin>>n;
+    string a, b, c;
+    cin>>a;
+    cin>>m;
+    cin>>b;
+    cin>>c;
+    for(int i=0;i<m;i++){
+        if(c[i]=='V'){
+            a = b[i] + a;
+        }else{
+            a = a + b[i];
+        }
+    }
+    cout<<a<<endl;
 }
 
 int main() {
