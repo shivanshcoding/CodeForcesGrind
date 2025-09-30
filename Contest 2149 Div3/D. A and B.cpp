@@ -77,7 +77,7 @@ void solve() {
     string s;
     cin>>s;
     vector<pll> pref_b(n,{0,-1}), pref_a(n,{0,-1}), suff_b(n,{0,-1}), suff_a(n,{0,-1});
-    ll ans = INT_MAX;
+    ll ans = LLONG_MAX;
     CountPref(pref_b,s,'b');
     //printv(pref_b);
     //cout<<"\n";
