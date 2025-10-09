@@ -1,58 +1,46 @@
 #include <bits/stdc++.h>
-using namespace std;
 
-struct D {
-    int n;
-    vector<int> p, x;
-    D(int n=0): n(n), p(n), x(n,0) { for(int i=0;i<n;++i) p[i]=i; }
-    pair<int,int> f(int a){
-        if(p[a]==a) return {a,0};
-        auto r = f(p[a]);
-        p[a] = r.first;
-        x[a] ^= r.second;
-        return {p[a], x[a]};
+using namespace std;
+using ll = long long;
+
+constexpr int MAXN = 250000;
+
+int a[MAXN + 100];
+ll prf[MAXN + 100][4];
+
+void solve(){
+    int n, q;
+    scanf("%d %d", &n, &q);
+
+    for (int i=1;i<=n;i++) scanf("%d", a+i);
+    
+    for (int i=1;i<=n;i++){
+        for (int j=0;j<3;j++) prf[i][j] = prf[i-1][j];
+        
+        int typ = 2;
+        if (popcount((unsigned)a[i]) == 1) typ = 0;
+        else if (popcount((unsigned)a[i]-1) == 1) typ = 1;
+
+        prf[i][typ]++;
+
+        prf[i][3] = prf[i-1][3] + (31 - countl_zero((unsigned)a[i]));
     }
-    bool u(int a,int b,int w){
-        auto pa = f(a);
-        auto pb = f(b);
-        int ra = pa.first, rb = pb.first;
-        int xa = pa.second, xb = pb.second;
-        if(ra==rb) return ((xa ^ xb) == w);
-        p[ra] = rb;
-        x[ra] = xa ^ xb ^ w;
-        return true;
+
+    while(q--){
+        int l, r;
+        scanf("%d %d", &l, &r);
+
+        ll cnt[3] = {0};
+        for (int j=0;j<3;j++) cnt[j] = prf[r][j] - prf[l-1][j];
+
+        ll ans = prf[r][3] - prf[l-1][3] + cnt[2] + cnt[1] / 2;
+        printf("%lld\n", ans);
     }
-};
+}
 
 int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
     int t;
-    if(!(cin >> t)) return 0;
-    while(t--){
-        int n; cin >> n;
-        string s; cin >> s;
-        vector<int> a(n, -1);
-        vector<int> z;
-        for(int i=0;i<n;++i) if(s[i]=='0'){ a[i] = (int)z.size(); z.push_back(i); }
-        int m = (int)z.size();
-        D d(m+1);
-        bool ok = true;
-        int S = m;
-        for(int j=0;j<n && ok;++j){
-            if(s[j]=='1'){
-                int l = (j-1>=0 && s[j-1]=='0') ? a[j-1] : -1;
-                int r = (j+1<n  && s[j+1]=='0') ? a[j+1] : -1;
-                if(l!=-1 && r!=-1){
-                    if(!d.u(l, r, 1)) ok = false;
-                } else if(l!=-1){
-                    if(!d.u(l, S, 0)) ok = false;
-                } else if(r!=-1){
-                    if(!d.u(r, S, 1)) ok = false;
-                }
-            }
-        }
-        cout << (ok ? "YES\n" : "NO\n");
-    }
-    return 0;
+    scanf("%d", &t);
+
+    while(t--) solve();
 }
