@@ -1,122 +1,214 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
+ 
 using namespace std;
-struct custom_hash {
-   static uint64_t splitmix64(uint64_t x) {
-       x += 0x9e3779b97f4a7c15;
-       x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-       x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-       return x ^ (x >> 31);
-   }
-size_t operator()(uint64_t x) const {
-       static const uint64_t FIXED_RANDOM =
-       chrono::steady_clock::now().time_since_epoch().count();
-       return splitmix64(x + FIXED_RANDOM);
-   }
-};
-#define prDouble(x) cout<<fixed<<setprecision(10)<<x
-#define fastio() ios::sync_with_stdio(false); cin.tie(nullptr)
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define pb push_back
-#define f first
-#define s second
-#define sz(x) (int)(x).size()
-using ll = long long;
-using ld = long double;
-using pll = pair<ll,ll>;
-using tll = tuple<ll,ll,ll>;
-using vll = vector<ll>;
-using vpll = vector<pll>;
-vector<ll> dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1}; // for grid
-vector<ll> ddx = {1,1,0,-1,-1,-1,0,1}, ddy = {0,1,1,1,0,-1,-1,-1}; // 8 directions
-template<typename T> void read(vector<T> &v) { for (auto &x : v) cin >> x; }
-template<typename T> void printv(const vector<T>& v) { for (auto &x : v) cout << x << ' '; }
-template<typename T> void print2d(const vector<vector<T>>& v) { for (auto &row : v) { for (auto &x : row) cout << x << ' '; cout << '\n'; } }
-ll t=1,n,m,p,q,r,k,a,b,c,x,y,z;
-const ll INF = 1e18, MOD = 998244353;
-
-ll power(ll base, ll exp) {
-    ll res = 1;
-    while (exp) {
-        if (exp % 2) res = (res * base) % MOD;
-        base = (base * base) % MOD;
-        exp /= 2;
+ 
+const int MOD = 998244353;
+const int N = 1000043;
+ 
+int add(int x, int y)
+{
+    x += y;
+    while(x >= MOD) x -= MOD;
+    while(x < 0) x += MOD;
+    return x;
+}
+ 
+int mul(int x, int y)
+{
+    return (x * 1ll * y) % MOD;
+}   
+ 
+int binpow(int x, int y)
+{
+    int z = 1;
+    while(y > 0)
+    {
+        if(y % 2 == 1) z = mul(z, x);
+        x = mul(x, x);
+        y /= 2;
     }
+    return z;
+}
+ 
+vector<int> get(const vector<int>& a)
+{
+    int cur = -1;
+    vector<int> res;
+    for(auto x : a)
+        if(x > cur)
+        {
+            res.push_back(x);
+            cur = x;
+        }
     return res;
 }
-
-ll countL(int i, int j, vector<ll>& Lh, vector<ll>& h, int maxi){
-    if (i >= n || j >= (int)Lh.size()) return 0;
-    if(h[i]==maxi){
-        if(Lh[j]==maxi){
-            return 1;
-        }else{
-            return 0;
+ 
+struct SegTree
+{
+    vector<int> f;
+    vector<int> t;
+    int n;
+ 
+    int getVal(int v, int pos)
+    {
+        return mul(t[pos], binpow(2, f[v]));
+    }   
+ 
+    void push(int v)
+    {
+        if(f[v] != 0)
+        {
+            f[2 * v + 1] += f[v];
+            f[2 * v + 2] += f[v];
+            f[v] = 0;
         }
     }
-    ll ans = 0;
-    if(h[i]==Lh[j]){
-        ans = (ans+countL(i+1,j+1,Lh,h,maxi))%MOD;
-        ans = (ans+countL(i+1,j,Lh,h,maxi))%MOD;
-    }else{
-        ans = (ans+2*countL(i+1,j,Lh,h,maxi))%MOD;
+ 
+    void resolve(int v, int pos)
+    {
+        if(f[v] != 0)
+        {
+            t[pos] = mul(t[pos], binpow(2, f[v]));
+            f[v] = 0;    
+        }
     }
-    return ans%MOD;
+ 
+    int get(int v, int l, int r, int pos)
+    {
+        if(l == r - 1)
+            return getVal(v, pos);
+        else
+        {
+            push(v);
+            int m = (l + r) / 2;
+            if(pos < m)
+                return get(v * 2 + 1, l, m, pos);
+            else
+                return get(v * 2 + 2, m, r, pos);
+        }
+    }
+ 
+    int get(int pos)
+    {
+        return get(0, 0, n, pos);
+    }
+ 
+    void inc(int v, int l, int r, int pos, int val)
+    {
+        if(l == r - 1)
+        {
+            resolve(v, pos);
+            t[pos] = add(t[pos], val);
+        }
+        else
+        {
+            push(v);
+            int m = (l + r) / 2;
+            if(pos < m)
+                inc(v * 2 + 1, l, m, pos, val);
+            else
+                inc(v * 2 + 2, m, r, pos, val);
+        }
+    }
+ 
+    void inc(int pos, int val)
+    {
+        return inc(0, 0, n, pos, val);
+    }
+ 
+    void mulBy2(int v, int l, int r, int L, int R)
+    {
+        if(L >= R) return;
+        if(l == L && r == R)
+            f[v]++;
+        else
+        {
+            push(v);
+            int m = (l + r) / 2;
+            mulBy2(v * 2 + 1, l, m, L, min(R, m));
+            mulBy2(v * 2 + 2, m, r, max(L, m), R);
+        }
+    }
+ 
+    void mulBy2(int l, int r)
+    {
+        mulBy2(0, 0, n, l, r);   
+    }
+ 
+    SegTree(int n = 0)
+    {
+        this->n = n;
+        f.resize(4 * n);
+        t.resize(n);
+    }
+};
+ 
+vector<int> calc(const vector<int>& a, const vector<int>& b)
+{
+    int n = a.size();
+    int m = b.size();
+    SegTree tree(m + 1);
+    tree.inc(0, 1);
+    vector<int> res(n);
+    int maxVal = b.back();
+    for(int i = 0; i < n; i++)
+    {
+        int x = a[i];
+        if(x > maxVal) continue;
+        else
+        {
+            if (x == maxVal) res[i] = tree.get(m - 1);
+            int lf = lower_bound(b.begin(), b.end(), x) - b.begin();
+            tree.mulBy2(lf + 1, m + 1);
+            if(b[lf] == x)
+            {
+                int cur = tree.get(lf);
+                tree.inc(lf + 1, cur);
+            }
+        }
+    }
+    return res; 
+}   
+ 
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for(int i = 0; i < n; i++)
+        cin >> a[i];
+    auto left_view = get(a);
+    reverse(a.begin(), a.end());
+    auto right_view = get(a);
+    reverse(a.begin(), a.end());
+ 
+    auto dpL = calc(a, left_view);
+    reverse(a.begin(), a.end());
+    auto dpR = calc(a, right_view);
+    reverse(a.begin(), a.end());
+    reverse(dpR.begin(), dpR.end());
+ 
+    int maxVal = *max_element(a.begin(), a.end());
+    int ans = 0;
+    int sumLeft = 0;
+    for(int i = 0; i < n; i++)
+    {
+        if(a[i] > maxVal) continue;
+        else
+        {   
+            if(a[i] == maxVal) ans = add(ans, mul(add(sumLeft, dpL[i]), dpR[i]));
+            sumLeft = mul(sumLeft, 2);
+            if(a[i] == maxVal) sumLeft = add(sumLeft, dpL[i]);
+        }
+    }
+    cout << ans << endl;
 }
-
-
-ll countR(int i, int j, vector<ll>& Lh, vector<ll>& h, int maxi){
-    if (i < 0 || j >= (int)Lh.size()) return 0;
-    if(h[i]==maxi){
-        if(Lh[j]==maxi){
-            return 1;
-        }else{
-            return 0;
-        }
-    }
-    ll ans =  0;
-    if(h[i]==Lh[j]){
-        ans = (ans+countR(i-1,j+1,Lh,h,maxi))%MOD;
-    }
-    ans = (ans+countR(i-1,j,Lh,h,maxi))%MOD;
-    return ans%MOD;
-}
-
-
-
-void solve() {
-    cin>>n;
-    vector<ll> h(n);
-    read(h);
-    vector<ll> Lh, Rh;
-    int curr =0;
-    int le = -1, re = n;
-    for(int i=0;i<n;i++){
-        if(h[i] > curr){
-            Lh.pb(h[i]);
-            curr = h[i];
-            le = i;
-        }else if(h[i]==curr){
-            le = i;
-        }
-    }
-    curr = 0;
-    for(int i=n-1;i>=0;i--){
-        if(h[i] > curr){
-            Rh.pb(h[i]);
-            curr = h[i];
-            re = i;
-        }else if(h[i]==curr){
-            re = i;
-        }
-    }
-    ll ans = (((countL(0,0,Lh,h,curr)*(power(2,(re-le+1))-1))%MOD)*countR(n-1,0,Rh,h,curr))%MOD;
-    cout<<ans<<endl;
-}
-
-int main() {
-    fastio();
+ 
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);    
+    int t;
     cin >> t;
-    while (t--) solve();
-    return 0;
+    for(int i = 0; i < t; i++) solve();
 }
