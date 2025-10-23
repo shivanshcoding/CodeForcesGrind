@@ -35,7 +35,6 @@ template<typename T> void print2d(const vector<vector<T>>& v) { for (auto &row :
 ll t=1,n,m,p,q,r,k,a,b,c,x,y,z;
 const ll INF = 1e18, MOD = 1e9+7;
 
-// This function contains the logic for a single test case.
 void solve() {
     cin >> n;
     vector<int> a(n);

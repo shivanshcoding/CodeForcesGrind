@@ -1,25 +1,50 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <numeric>
-
+#include <bits/stdc++.h>
 using namespace std;
+struct custom_hash {
+   static uint64_t splitmix64(uint64_t x) {
+       x += 0x9e3779b97f4a7c15;
+       x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+       x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+       return x ^ (x >> 31);
+   }
+size_t operator()(uint64_t x) const {
+       static const uint64_t FIXED_RANDOM =
+       chrono::steady_clock::now().time_since_epoch().count();
+       return splitmix64(x + FIXED_RANDOM);
+   }
+};
+#define prDouble(x) cout<<fixed<<setprecision(10)<<x
+#define fastio() ios::sync_with_stdio(false); cin.tie(nullptr)
+#define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
+#define pb push_back
+#define f first
+#define s second
+#define sz(x) (int)(x).size()
 using ll = long long;
+using ld = long double;
+using pll = pair<ll,ll>;
+using tll = tuple<ll,ll,ll>;
+using vll = vector<ll>;
+using vpll = vector<pll>;
+vector<ll> dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1}; // for grid
+vector<ll> ddx = {1,1,0,-1,-1,-1,0,1}, ddy = {0,1,1,1,0,-1,-1,-1}; // 8 directions
+template<typename T> void read(vector<T> &v) { for (auto &x : v) cin >> x; }
+template<typename T> void printv(const vector<T>& v) { for (auto &x : v) cout << x << ' '; }
+template<typename T> void print2d(const vector<vector<T>>& v) { for (auto &row : v) { for (auto &x : row) cout << x << ' '; cout << '\n'; } }
+ll t=1,n,m,p,q,r,k,a,b,c,x,y,z;
+const ll INF = 1e18, MOD = 1e9+7;
+const ll MAX_EXP = 65; 
 
-const int MOD = 1e9 + 7;
-const int MAX_EXP = 65; // Max possible exponent for a prime factor of a number <= 10^14
 
-// Precomputed factorials and their modular inverses
 ll fact[MAX_EXP];
 ll invFact[MAX_EXP];
 
-// Globals for the recursive solver
 ll N_val, A_val;
-vector<pair<ll, int>> pf_B; // Prime factorization of B
-vector<pair<ll, int>> pf_d; // Prime factorization of the current divisor d
+vector<pair<ll, int>> pf_B;
+vector<pair<ll, int>> pf_d;
 ll total_ans;
 
-// Function for modular exponentiation (to find modular inverse)
 ll power(ll base, ll exp) {
     ll res = 1;
     base %= MOD;
@@ -31,12 +56,12 @@ ll power(ll base, ll exp) {
     return res;
 }
 
-// Function to calculate modular inverse using Fermat's Little Theorem
+
 ll modInverse(ll n) {
     return power(n, MOD - 2);
 }
 
-// Precompute factorials and their inverses up to MAX_EXP
+
 void precompute_factorials() {
     fact[0] = 1;
     invFact[0] = 1;
@@ -46,7 +71,6 @@ void precompute_factorials() {
     }
 }
 
-// Calculates C(N+k-1, k) % MOD efficiently for large N
 ll combinations(int k, ll N) {
     if (k < 0) return 0;
     if (k == 0) return 1;
@@ -58,8 +82,6 @@ ll combinations(int k, ll N) {
     return (num * invFact[k]) % MOD;
 }
 
-// Calculates the number of ways to form a product from N multipliers,
-// given its prime factorization.
 ll count_ways(const vector<pair<ll, int>>& prime_factors, ll N) {
     ll res = 1;
     for (auto const& [p, e] : prime_factors) {
@@ -68,17 +90,13 @@ ll count_ways(const vector<pair<ll, int>>& prime_factors, ll N) {
     return res;
 }
 
-// Recursively generates all divisors of B, and for each valid one,
-// calculates its contribution to the total answer.
+
 void generate_divisors_and_calculate(int k, ll current_d) {
-    // Base case: we have constructed a full divisor d
     if (k == (int)pf_B.size()) {
-        // Condition: coolness after N days (d) must be <= A
         if (current_d > A_val) {
             return;
         }
 
-        // Calculate prime factors of the complementary divisor B/d
         vector<pair<ll, int>> pf_comp;
         for (size_t i = 0; i < pf_B.size(); ++i) {
             if (pf_B[i].second - pf_d[i].second > 0) {
@@ -97,10 +115,7 @@ void generate_divisors_and_calculate(int k, ll current_d) {
     int max_exp = pf_B[k].second;
     ll p_power = 1;
 
-    // Iterate through all powers of the current prime factor
     for (int i = 0; i <= max_exp; ++i) {
-        // Pruning: if current_d * p_power would exceed A, stop.
-        // Using double division to avoid overflow with large numbers.
         if ((double)A_val / p_power < current_d) {
             break;
         }
@@ -119,7 +134,6 @@ void solve() {
     ll B_val;
     cin >> N_val >> A_val >> B_val;
 
-    // Prime factorize B
     pf_B.clear();
     ll temp_B = B_val;
     for (ll i = 2; i * i <= temp_B; ++i) {
@@ -143,11 +157,9 @@ void solve() {
 }
 
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+    fastio();
     precompute_factorials();
 
-    int t;
     cin >> t;
     for (int i = 1; i <= t; ++i) {
         cout << "Case #" << i << ": ";

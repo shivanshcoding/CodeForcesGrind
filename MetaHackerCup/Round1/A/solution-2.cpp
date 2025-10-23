@@ -1,9 +1,40 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
+struct custom_hash {
+   static uint64_t splitmix64(uint64_t x) {
+       x += 0x9e3779b97f4a7c15;
+       x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+       x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+       return x ^ (x >> 31);
+   }
+size_t operator()(uint64_t x) const {
+       static const uint64_t FIXED_RANDOM =
+       chrono::steady_clock::now().time_since_epoch().count();
+       return splitmix64(x + FIXED_RANDOM);
+   }
+};
+#define prDouble(x) cout<<fixed<<setprecision(10)<<x
+#define fastio() ios::sync_with_stdio(false); cin.tie(nullptr)
+#define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
+#define pb push_back
+#define f first
+#define s second
+#define sz(x) (int)(x).size()
 using ll = long long;
+using ld = long double;
+using pll = pair<ll,ll>;
+using tll = tuple<ll,ll,ll>;
+using vll = vector<ll>;
+using vpll = vector<pll>;
+vector<ll> dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1}; // for grid
+vector<ll> ddx = {1,1,0,-1,-1,-1,0,1}, ddy = {0,1,1,1,0,-1,-1,-1}; // 8 directions
+template<typename T> void read(vector<T> &v) { for (auto &x : v) cin >> x; }
+template<typename T> void printv(const vector<T>& v) { for (auto &x : v) cout << x << ' '; }
+template<typename T> void print2d(const vector<vector<T>>& v) { for (auto &row : v) { for (auto &x : row) cout << x << ' '; cout << '\n'; } }
+ll t=1,n,m,p,q,r,k,a,b,c,x,y,z;
+const ll INF = 1e18, MOD = 1e9+7;
 
-// This function checks if a ladder of height 'h' is sufficient
-// to visit all platforms.
 bool check(ll h, int n, const vector<ll>& a) {
     if (n == 0) {
         return true;
@@ -13,7 +44,6 @@ bool check(ll h, int n, const vector<ll>& a) {
     queue<int> q;
     int visited_count = 0;
 
-    // Start a BFS from all platforms reachable from the ground
     for (int i = 0; i < n; ++i) {
         if (a[i] <= h) {
             if (!visited[i]) {
@@ -24,19 +54,16 @@ bool check(ll h, int n, const vector<ll>& a) {
         }
     }
 
-    // Explore the graph from the initial set of reachable platforms
     while (!q.empty()) {
         int u = q.front();
         q.pop();
 
-        // Check left neighbor
         if (u > 0 && !visited[u - 1] && abs(a[u] - a[u - 1]) <= h) {
             visited[u - 1] = true;
             q.push(u - 1);
             visited_count++;
         }
 
-        // Check right neighbor
         if (u < n - 1 && !visited[u + 1] && abs(a[u] - a[u + 1]) <= h) {
             visited[u + 1] = true;
             q.push(u + 1);
@@ -44,12 +71,10 @@ bool check(ll h, int n, const vector<ll>& a) {
         }
     }
     
-    // If we visited all N platforms, this height is valid.
     return visited_count == n;
 }
 
 void solve() {
-    int n;
     cin >> n;
     vector<ll> a(n);
     for (int i = 0; i < n; ++i) {
@@ -57,17 +82,15 @@ void solve() {
     }
 
     ll low = 0;
-    ll high = 1e9 + 7; // A safe upper bound
+    ll high = 1e9 + 7;
     ll ans = high;
 
     while (low <= high) {
         ll mid = low + (high - low) / 2;
         if (check(mid, n, a)) {
-            // This height works, try for a smaller one
             ans = mid;
             high = mid - 1;
         } else {
-            // This height is too small, need a larger ladder
             low = mid + 1;
         }
     }
@@ -75,11 +98,7 @@ void solve() {
 }
 
 int main() {
-    // Fast I/O
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    int t;
+    fastio();
     cin >> t;
     for (int i = 1; i <= t; ++i) {
         cout << "Case #" << i << ": ";
