@@ -1,9 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long ; using ld = long double ;
-constexpr int mod = 1000000007 ;
-//const int INF=LLONG_MAX>>1;
-#define reverse(res) reverse(res.begin(),res.end());
+using ll = long long;
+using ld = long double;
+constexpr int mod = 1000000007;
+// const int INF=LLONG_MAX>>1;
+#define reverse(res) reverse(res.begin(), res.end());
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define umap unordered_map
@@ -11,7 +12,7 @@ constexpr int mod = 1000000007 ;
 #define pb push_back
 #define eb emplace_back
 #define pob pop_back
-#define pii pair<int,int>
+#define pii pair<int, int>
 #define ff first
 #define ss second
 #define lb lower_bound
@@ -22,24 +23,24 @@ constexpr int mod = 1000000007 ;
 #define maxele max_element
 #define minele min_element
 #define len(s) (s).length()
-#define nl cout<<endl 
-#define rep(i, a, b) for(int i = a; i < b; i++)
-#define trav(it , strt , end) for(auto it = strt; it != end ; it++ )
+#define nl cout << endl
+#define rep(i, a, b) for (int i = a; i < b; i++)
+#define trav(it, strt, end) for (auto it = strt; it != end; it++)
 /*
 **************************************************************************************************
 **************************************************************************************************
-                    ***        **************
-                    ***        **************
-                    ***  ***   ***   ***
-                    ***  ***   ***   ***
-                    ***        ***
-                    *************************
-                    *************************
-                               ***        ***
-                         ***   ***   ***  ***
-                         ***   ***   ***  ***
-                    **************        ***
-                    **************        ***
+***        **************
+***        **************
+***  ***   ***   ***
+***  ***   ***   ***
+***        ***
+*************************
+*************************
+***        ***
+***   ***   ***  ***
+***   ***   ***  ***
+**************        ***
+**************        ***
 *************************************************************************************************
 **************************************************************************************************
 */
@@ -71,7 +72,7 @@ if(b&1) {
 res = (res)%m*(a)%m;
  }
 b = b >> 1;
-a = ((a)%m *( a)%m)%m; 
+a = ((a)%m *( a)%m)%m;
  }
 return res;
 }
@@ -107,14 +108,14 @@ fact%=mod;
 return fact%mod;
 }*/
 /************************************************/
- /*for (int i = 2; i * i <= num; ++i) {
+/*for (int i = 2; i * i <= num; ++i) {
 while (num % i == 0) {
 count[i]++;
- num /= i;
+num /= i;
 }
 }
 if (num > 1) {
-count[num]++; 
+count[num]++;
 }*/
 /************************************************/
 /*const int N = 1e6;
@@ -165,35 +166,45 @@ void Union_sets(int a, int b) {
     }
 }*/
 /************************************************/
-void debug(const vector<int>& arr) {
-for (size_t i = 0; i < arr.size(); ++i) {
-cerr<< arr[i] << endl;
-}
-cerr << endl;
+void debug(const vector<int> &arr)
+{
+    for (size_t i = 0; i < arr.size(); ++i)
+    {
+        cerr << arr[i] << endl;
+    }
+    cerr << endl;
 }
 /************************************************/
-void solve() {
+void solve()
+{
     int n, m;
     cin >> n >> m;
     vi a(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         cin >> a[i];
     }
     vector<pair<int, int>> b(m);
-    for (int i = 0; i < m; i++) {
+    for (int i = 0; i < m; i++)
+    {
         cin >> b[i].first;
     }
-    for (int i = 0; i < m; i++) {
+    for (int i = 0; i < m; i++)
+    {
         cin >> b[i].second;
     }
 
     vector<pair<int, int>> d;
     vector<pair<int, int>> e;
-    
-    for (int i = 0; i < m; i++) {
-        if (b[i].second == 0) {
+
+    for (int i = 0; i < m; i++)
+    {
+        if (b[i].second == 0)
+        {
             e.pb(b[i]);
-        } else {
+        }
+        else
+        {
             d.pb(b[i]);
         }
     }
@@ -202,19 +213,22 @@ void solve() {
     sort(all(e));
 
     multiset<int> mt;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         mt.insert(a[i]);
     }
 
     int kills = 0;
 
-    for (int i = 0; i < d.size(); i++) {
+    for (int i = 0; i < d.size(); i++)
+    {
         int h = d[i].first;
         int r = d[i].second;
 
         auto it = mt.lower_bound(h);
 
-        if (it == mt.end()) {
+        if (it == mt.end())
+        {
             break;
         }
 
@@ -225,35 +239,43 @@ void solve() {
     }
 
     vector<int> f;
-    for (int sword : mt) {
+    for (int sword : mt)
+    {
         f.pb(sword);
     }
 
     int i = 0;
     int j = 0;
 
-    while (i < e.size() && j < f.size()) {
+    while (i < e.size() && j < f.size())
+    {
         int h = e[i].first;
         int k = f[j];
 
-        if (k >= h) {
+        if (k >= h)
+        {
             kills++;
             i++;
             j++;
-        } else {
+        }
+        else
+        {
             j++;
         }
     }
 
     cout << kills << "\n";
 }
-signed main() {
-     ios_base::sync_with_stdio(false);
-     cin.tie(); cout.tie(0);
-      int t;
-      cin>>t;
-      while(t--){
+signed main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie();
+    cout.tie(0);
+    int t;
+    cin >> t;
+    while (t--)
+    {
         solve();
-      }
+    }
     return 0;
 }
