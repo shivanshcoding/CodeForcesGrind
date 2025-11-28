@@ -1,11 +1,11 @@
 # 💻 CodeForcesGrind  
 
 <p align="center">
-  <a href="https://codeforces.com/profile/shivanshcoding">
-    <img src="https://img.shields.io/badge/Codeforces-Expert_1664-1F8ACB?style=for-the-badge&logo=codeforces&logoColor=white" />
+  <a href="https://codeforces.com/profile/algoslayer">
+    <img src="https://img.shields.io/badge/Codeforces-Expert_1850-1F8ACB?style=for-the-badge&logo=codeforces&logoColor=white" />
   </a>
   <a href="https://leetcode.com/u/shivansh_coding">
-    <img src="https://img.shields.io/badge/LeetCode-760%2B_Problems_1687-FFA116?style=for-the-badge&logo=leetcode&logoColor=white" />
+    <img src="https://img.shields.io/badge/LeetCode-Gaurdian_2199-FFA116?style=for-the-badge&logo=leetcode&logoColor=white" />
   </a>
 </p>
 
@@ -41,10 +41,10 @@ CodeForcesGrind/
 
 # ⚡ Current Grind Stats  
 
-- ⭐ **Codeforces Rating:** 1664 (Expert)  
+- ⭐ **Codeforces Rating:** 1850 (Expert)  
 - 🔥 **Contests Attended:** 20+  
-- 📝 **Problems Solved on Codeforces:** 250+  
-- 🧩 **LeetCode Practice:** 760+ problems (1687 rating)  
+- 📝 **Problems Solved on Codeforces:** 100+  
+- 🧩 **LeetCode Practice:** 900+ problems (2199 rating)  
 
 ---
 
