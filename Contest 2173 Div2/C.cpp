@@ -39,12 +39,13 @@ void solve() {
     cin>>n>>k;
     vector<ll> a(n);
     read(a);
+    sort(all(a));
+    a.erase(unique(all(a)), a.end());
+    n = a.size();
     if(n==k){
         cout<<"1\n1\n";
         return;
     }
-    sort(all(a));
-    a.erase(unique(all(a)), a.end());
     unordered_map<ll,ll> mpp;
     for(ll& x: a){
         mpp[x] = 0;
