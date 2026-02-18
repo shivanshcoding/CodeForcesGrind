@@ -42,12 +42,13 @@ void solve() {
     for(int i=0;i<n;i++){
         ll num;
         cin>>num;
-        if(a.size()>0 && a.back()!=num){
-            a.push_back(num);
+        if(a.size()>0 && a.back()==num){
+            continue;
         }
+        a.push_back(num);
     }
     int k = 0;
-    for(int i=0;i<n;i++){
+    for(int i=0;i<n && k<a.size();i++){
         if(p[i]==a[k]){
             k++;
         }
