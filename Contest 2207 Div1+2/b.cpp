@@ -1,62 +1,114 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
+#include <bits/stdc++.h>
 using namespace std;
+struct custom_hash
+{
+    static uint64_t splitmix64(uint64_t x)
+    {
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+    size_t operator()(uint64_t x) const
+    {
+        static const uint64_t FIXED_RANDOM =
+            chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+#define prDouble(x) cout << fixed << setprecision(10) << x
+#define fastio()                 \
+    ios::sync_with_stdio(false); \
+    cin.tie(nullptr)
+#define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
+#define pb push_back
+#define f first
+#define s second
+#define sz(x) (int)(x).size()
+using ll = long long;
+using ld = long double;
+using pll = pair<ll, ll>;
+using tll = tuple<ll, ll, ll>;
+using vll = vector<ll>;
+using vpll = vector<pll>;
+vector<ll> dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1};                               // for grid
+vector<ll> ddx = {1, 1, 0, -1, -1, -1, 0, 1}, ddy = {0, 1, 1, 1, 0, -1, -1, -1}; // 8 directions
+template <typename T>
+void read(vector<T> &v)
+{
+    for (auto &x : v)
+        cin >> x;
+}
+template <typename T>
+void printv(const vector<T> &v)
+{
+    for (auto &x : v)
+        cout << x << ' ';
+}
+template <typename T>
+void print2d(const vector<vector<T>> &v)
+{
+    for (auto &row : v)
+    {
+        for (auto &x : row)
+            cout << x << ' ';
+        cout << '\n';
+    }
+}
+ll t = 1, n, m, l, p, q, r, k, a, b, c, x, y, z;
+const ll INF = 1e18, MOD = 1e9 + 7;
 
-void solve() {
-    int n, m;
-    long long l;
+void solve()
+{
     cin >> n >> m >> l;
-    
-    vector<long long> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-    }
-    
-    // dp[k] represents the max possible sum of the top k animatronics
-    vector<long long> dp(m + 1, 0);
-    long long last_time = 0;
-    
-    for (int i = 0; i < n; i++) {
-        long long L = a[i] - last_time;
-        
-        // Time passes: the adversary adds L to the top k sum capabilities
-        for (int k = 1; k <= m; k++) {
-            dp[k] += L;
+
+    vector<int> a(n);
+    read(a);
+
+    vector<ll> D(m, 0);
+    ll flash_idx = 0;
+
+    for (int t = 1; t <= l; t++)
+    {
+        ll rem_flashes = n - flash_idx;
+        ll c = min(m, rem_flashes + 1);
+        ll target_val = D[c - 1];
+        ll p = -1;
+        for (int i = 0; i < c; i++)
+        {
+            if (D[i] == target_val)
+            {
+                p = i;
+                break;
+            }
         }
-        
-        // Player flashes: resets the highest element to 0
-        vector<long long> next_dp(m + 1, 0);
-        for (int k = 1; k < m; k++) {
-            next_dp[k] = (1LL * k * dp[k + 1]) / (k + 1);
+
+        // Increment the optimally chosen animatronic
+        D[p]++;
+
+        // Check if a flash happens exactly at this second
+        if (flash_idx < n && a[flash_idx] == t)
+        {
+            for (int i = 0; i < m - 1; i++)
+            {
+                D[i] = D[i + 1];
+            }
+            D[m - 1] = 0;
+
+            flash_idx++;
         }
-        // Element m bound caps off at m-1 because 1 element was zeroed out
-        next_dp[m] = next_dp[m - 1]; 
-        
-        dp = next_dp;
-        last_time = a[i];
     }
-    
-    // Remaining time until the end of the night
-    long long L = l - last_time;
-    for (int k = 1; k <= m; k++) {
-        dp[k] += L;
-    }
-    
-    // The maximum individual danger level possible at the end of the night
-    cout << dp[1] << "\n";
+
+    // The answer is the maximum danger level at the end of the night
+    cout << D[0] << "\n";
 }
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    
-    int t;
-    if (cin >> t) {
-        while (t--) {
-            solve();
-        }
-    }
+int main()
+{
+    fastio();
+    cin >> t;
+    while (t--)
+        solve();
     return 0;
 }
