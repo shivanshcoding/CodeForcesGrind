@@ -1,87 +1,60 @@
 #include <bits/stdc++.h>
-using namespace std;
-struct custom_hash {
-   static uint64_t splitmix64(uint64_t x) {
-       x += 0x9e3779b97f4a7c15;
-       x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-       x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-       return x ^ (x >> 31);
-   }
-size_t operator()(uint64_t x) const {
-       static const uint64_t FIXED_RANDOM =
-       chrono::steady_clock::now().time_since_epoch().count();
-       return splitmix64(x + FIXED_RANDOM);
-   }
-};
-#define prDouble(x) cout<<fixed<<setprecision(10)<<x
-#define fastio() ios::sync_with_stdio(false); cin.tie(nullptr)
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define pb push_back
+ 
 #define f first
 #define s second
-#define sz(x) (int)(x).size()
-using ll = long long;
-using ld = long double;
-using pll = pair<ll,ll>;
-using tll = tuple<ll,ll,ll>;
-using vll = vector<ll>;
-using vpll = vector<pll>;
-vector<ll> dx = {1, -1, 0, 0}, dy = {0, 0, 1, -1}; // for grid
-vector<ll> ddx = {1,1,0,-1,-1,-1,0,1}, ddy = {0,1,1,1,0,-1,-1,-1}; // 8 directions
-template<typename T> void read(vector<T> &v) { for (auto &x : v) cin >> x; }
-template<typename T> void printv(const vector<T>& v) { for (auto &x : v) cout << x << ' '; }
-template<typename T> void print2d(const vector<vector<T>>& v) { for (auto &row : v) { for (auto &x : row) cout << x << ' '; cout << '\n'; } }
-ll t=1,n,m,p,q,r,k,a,b,c,x,y,z;
-const ll INF = 1e18, MOD = 1e9+7;
+#define pb push_back
+ 
+typedef long long int ll;
+typedef unsigned long long int ull;
+using namespace std;
+typedef pair<int,int> pii;
 
-void solve(){
-    ll st;
-    cin>>n>>k>>st;
-
-    vector<vector<ll>> g(n+1);
-
-    for(int i=0;i<n-1;i++){
-        int a,b;
-        cin>>a>>b;
-        g[a].push_back(b);
-        g[b].push_back(a);
+#define INF 1e9
+ 
+vector<vector<int>> adj;
+ 
+int N, K, V;
+ 
+int dfs(int v, int p = -1) {
+    int l1 = INF;
+    int l2 = INF;
+    for (int u : adj[v]) {
+        if (u != p) {
+            int guy = dfs(u, v);
+            if (guy < l2) swap(l2, guy);
+            if (l2 < l1) swap(l1, l2);
+        }
     }
-
-    bool ok=false;
-
-    function<int(int,int)> dfs = [&](int u,int p){
-        if(g[u].size()==1 && u!=st) return 0;
-        int best=1e9,second=1e9;
-        for(int i=0;i<(int)g[u].size();i++){
-            int v=g[u][i];
-            if(v==p) continue;
-            int val=1+dfs(v,u);
-            if(val<best){
-                second=best;
-                best=val;
-            }
-            else if(val<second){
-                second=val;
-            }
-        }
-        if(u==st){
-            if(second<=k) ok=true;
-            return 0;
-        }
-        if(second<k) return 0;
-        if(best==1e9) return 0;
-        return best;
-    };
-    dfs(st,0);
-
-    if(ok) cout<<"YES\n";
-    else cout<<"NO\n";
+    if (l1 == INF) {
+        return 0;
+    } else if (l2 == INF) {
+        return 1 + l1;
+    } else {
+        int s = 1 + l1;
+        if (l1 + l2 < K) s = 0;
+        return s;
+    }
+ 
+    // what
+    return -1;
 }
-
+ 
 int main() {
-    fastio();
-    cin >> t;
-    while (t--) solve();
+    bool debug = 0;
+	ios::sync_with_stdio(0);
+    cin.tie(0);
+ 
+    int T; cin >> T;
+    while (T--) {
+        cin >> N >> K >> V;
+        adj = vector<vector<int>>(N+1);
+        for (int i = 1; i < N; i++) {
+            int a, b; cin >> a >> b;
+            adj[a].push_back(b);
+            adj[b].push_back(a);
+        }
+        cout << (dfs(V) ? "NO" : "YES") << endl;
+    }
+ 
     return 0;
 }
